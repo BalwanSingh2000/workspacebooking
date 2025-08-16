@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int     @id @default(autoincrement())
+  email    String  @unique
+  password String
+  role     Role
+}
+
+enum Role {
+  admin
+  user
+}
+
+model Workspace {
+  id        Int        @id @default(autoincrement())
+  name      String
+  location  String
+  capacity  Int
+  bookings  Booking[]
+  createdAt DateTime   @default(now())
+}
+
+enum BookingStatus {
+  pending
+  approved
+  rejected
+}
+
+model Booking {
+  id            Int           @id @default(autoincrement())
+  workspaceId   Int
+  date          String
+  startTime     String        @default("09:00") // <-- new column with default
+  seatsRequired Int
+  fullName      String
+  phone         String
+  email         String
+  loginEmail    String?       // <-- make optional first
+  status        BookingStatus @default(pending)
+  workspace     Workspace     @relation(fields: [workspaceId], references: [id])
+
+  @@unique([workspaceId, date, startTime, email]) // updated to include startTime for uniqueness
+}
+
+
+
+
+
+
