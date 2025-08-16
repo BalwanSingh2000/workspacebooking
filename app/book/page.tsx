@@ -1,7 +1,7 @@
 "use client"
 import { useState, useEffect } from "react"
 import toast from "react-hot-toast";
-
+import LoadingSpinner from "../components/LoadingSpinner"; // 👈 adjust path if needed
 
 interface Workspace {
   id: number
@@ -16,6 +16,7 @@ interface Booking {
   date: string
   seatsRequired: number
   status: string
+  startTime?: string
 }
 
 export default function BookingPage() {
@@ -29,6 +30,9 @@ export default function BookingPage() {
   const [email, setEmail] = useState("") // new email field
   const [message, setMessage] = useState("")
   const [bookings, setBookings] = useState<Booking[]>([])
+
+  const [loadingBookings, setLoadingBookings] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
 
   // Fetch workspaces
   useEffect(() => {
@@ -49,6 +53,7 @@ export default function BookingPage() {
   // Fetch my bookings
   async function fetchBookings() {
     try {
+      setLoadingBookings(true)
       const res = await fetch("/api/bookings", { credentials: "include" })
       if (res.ok) {
         const data = await res.json()
@@ -56,6 +61,8 @@ export default function BookingPage() {
       }
     } catch (err) {
       console.error("Error fetching bookings:", err)
+    } finally {
+      setLoadingBookings(false)
     }
   }
 
@@ -66,57 +73,32 @@ export default function BookingPage() {
   // Handle booking submit
   async function handleBooking(e: React.FormEvent) {
     e.preventDefault()
-    // setMessage("")
-
-    // if (!selectedWorkspace) {
-    //   setMessage("Please select a workspace.")
-    //   return
-    // }
-    // if (!date) {
-    //   setMessage("Please select a date.")
-    //   return
-    // }
-    // if (!fullName.trim() || fullName.trim().length < 3) {
-    //     setMessage("Full name must be at least 3 characters long.")
-    //     return
-    //   }
-    //   if (!/^\d{10}$/.test(phone)) {
-    //     setMessage("Please enter a valid 10-digit phone number.")
-    //     return
-    //   }
-    //   if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(email)) {
-    //     setMessage("Please enter a valid email address.")
-    //     return
-    //   }
-    // if (seatsRequired < 1 || seatsRequired > selectedWorkspace.capacity) {
-    //   setMessage(`We are sorry but our max seats are ${selectedWorkspace.capacity}.`)
-    //   return
-    // }
     if (!selectedWorkspace) {
-        toast.error("Please select a workspace.");
-        return;
-      }
-      if (!date) {
-        toast.error("Please select a date.");
-        return;
-      }
-      if (!fullName.trim() || fullName.trim().length < 3) {
-        toast.error("Full name must be at least 3 characters long.");
-        return;
-      }
-      if (!/^\d{10}$/.test(phone)) {
-        toast.error("Please enter a valid 10-digit phone number.");
-        return;
-      }
-      if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(email)) {
-        toast.error("Please enter a valid email address.");
-        return;
-      }
-      if (seatsRequired < 1 || seatsRequired > selectedWorkspace.capacity) {
-        toast.error(`We are sorry but our max seats are ${selectedWorkspace.capacity}.`);
-        return;
-      }
-      
+      toast.error("Please select a workspace.");
+      return;
+    }
+    if (!date) {
+      toast.error("Please select a date.");
+      return;
+    }
+    if (!fullName.trim() || fullName.trim().length < 3) {
+      toast.error("Full name must be at least 3 characters long.");
+      return;
+    }
+    if (!/^\d{10}$/.test(phone)) {
+      toast.error("Please enter a valid 10-digit phone number.");
+      return;
+    }
+    if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(email)) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+    if (seatsRequired < 1 || seatsRequired > selectedWorkspace.capacity) {
+      toast.error(`We are sorry but our max seats are ${selectedWorkspace.capacity}.`);
+      return;
+    }
+
+    setSubmitting(true)
     const res = await fetch("/api/bookings", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -133,31 +115,20 @@ export default function BookingPage() {
     })
 
     const data = await res.json()
-    // if (res.ok) {
-    //   alert("Booking successful!")
-    //   setDate("")
-    //   setSeatsRequired(1)
-    //   setFullName("")
-    //   setPhone("")
-    //   setEmail("")
-    //   setSelectedWorkspace(null)
-    //   fetchBookings()
-    // } else {
-    //   setMessage(data.error || "Booking failed")
-    // }
+    setSubmitting(false)
+
     if (res.ok) {
-        toast.success("Booking successful!");
-        setDate("");
-        setSeatsRequired(1);
-        setFullName("");
-        setPhone("");
-        setEmail("");
-        setSelectedWorkspace(null);
-        fetchBookings();
-      } else {
-        toast.error(data.error || "Booking failed");
-      }
-      
+      toast.success("Booking successful!");
+      setDate("");
+      setSeatsRequired(1);
+      setFullName("");
+      setPhone("");
+      setEmail("");
+      setSelectedWorkspace(null);
+      fetchBookings();
+    } else {
+      toast.error(data.error || "Booking failed");
+    }
   }
 
   return (
@@ -262,17 +233,22 @@ export default function BookingPage() {
 
         <button
           type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded"
-          disabled={!selectedWorkspace || seatsRequired > (selectedWorkspace?.capacity || 0)}
+          className="bg-blue-500 text-white px-4 py-2 rounded flex items-center justify-center gap-2"
+          disabled={submitting || !selectedWorkspace || seatsRequired > (selectedWorkspace?.capacity || 0)}
         >
-          Book Now
+          {submitting && <LoadingSpinner />}
+          {submitting ? "Booking..." : "Book Now"}
         </button>
       </form>
 
       {/* My Bookings */}
       <div className="mt-10">
         <h2 className="text-xl font-bold mb-4">My Bookings</h2>
-        {bookings.length === 0 ? (
+        {loadingBookings ? (
+          <div className="flex justify-center py-6">
+            <LoadingSpinner />
+          </div>
+        ) : bookings.length === 0 ? (
           <p>No bookings found.</p>
         ) : (
           <table className="border w-full">

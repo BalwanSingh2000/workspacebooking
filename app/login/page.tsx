@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import LoadingSpinner from '../components/LoadingSpinner'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -78,7 +79,7 @@ export default function LoginPage() {
           disabled={loading}
           className="w-full bg-black text-white p-2 rounded disabled:opacity-50"
         >
-          {loading ? 'Logging in...' : 'Login'}
+          {loading ? <LoadingSpinner/> : 'Login'}
         </button>
       </form>
 
