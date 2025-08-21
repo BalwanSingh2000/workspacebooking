@@ -115,7 +115,7 @@ export async function POST(req: Request) {
   const token = jwt.sign(
     { id: user.id, role: user.role, email: user.email },
     JWT_SECRET,
-    { expiresIn: '1h' }
+    { expiresIn: '7d' }
   )
 
   // 4️⃣ Send token in cookie

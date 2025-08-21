@@ -10,9 +10,9 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  experimental: {
-    nodeMiddleware: true, // ✅ Enable Node.js runtime for middleware
-  },
+  // experimental: {
+  //   nodeMiddleware: true, // ✅ Enable Node.js runtime for middleware
+  // },
 }
 
 module.exports = nextConfig
