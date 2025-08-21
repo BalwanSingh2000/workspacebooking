@@ -130,3 +130,26 @@ export async function POST(req: Request) {
   return res
 }
 
+// app/api/login/route.ts
+// import { NextResponse } from 'next/server'
+
+// export async function POST(req: Request) {
+//   const { email, password } = await req.json()
+
+//   // Hardcoded credentials
+//   const users = [
+//     { email: 'admin@altf.com', password: 'Admin@123', role: 'admin' },
+//     { email: 'user@altf.com', password: 'User@123', role: 'user' },
+//   ]
+
+//   const user = users.find(u => u.email === email && u.password === password)
+
+//   if (!user) {
+//     return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
+//   }
+
+//   const response = NextResponse.json({ message: 'Login successful', role: user.role })
+//   // Set cookie valid for 24 hours
+//   response.cookies.set('authSession', user.role, { httpOnly: true, maxAge: 24 * 60 * 60 })
+//   return response
+// }

@@ -154,3 +154,38 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
 }
+
+// import { NextResponse } from 'next/server'
+// import prisma from '@/lib/prismadb'
+
+// export async function GET(req: Request) {
+//   const role = req.cookies.get('authSession')?.value
+//   if (!role || role !== 'admin') {
+//     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+//   }
+
+//   try {
+//     const workspaces = await prisma.workspace.findMany()
+//     return NextResponse.json(workspaces)
+//   } catch (err) {
+//     console.error(err)
+//     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+//   }
+// }
+
+// export async function POST(req: Request) {
+//   const role = req.cookies.get('authSession')?.value
+//   if (!role || role !== 'admin') {
+//     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+//   }
+
+//   const { name, location, capacity } = await req.json()
+
+//   try {
+//     const workspace = await prisma.workspace.create({ data: { name, location, capacity } })
+//     return NextResponse.json(workspace)
+//   } catch (err) {
+//     console.error(err)
+//     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+//   }
+// }

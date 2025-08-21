@@ -297,7 +297,7 @@ export default function AdminWorkspacesPage() {
       </form>
 
       {/* Table */}
-      <table className="w-full border">
+     <table className="w-full border">
   <thead>
     <tr className="bg-gray-100">
       <th className="border p-2">Name</th>
