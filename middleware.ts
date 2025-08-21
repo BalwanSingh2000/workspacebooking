@@ -36,12 +36,12 @@ export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
   const token = req.cookies.get(JWT_COOKIE_NAME)?.value
 
-  // 1️⃣ No token → protect admin & book pages
+  // Protect admin and /book routes
   if (!token && (pathname.startsWith('/admin') || pathname.startsWith('/book'))) {
     return NextResponse.redirect(new URL('/login', req.url))
   }
 
-  // 2️⃣ Logged-in users trying to access /login → allow client to handle role-based redirect
+  // If logged in, allow login page, client decides redirect
   if (pathname === '/login' && token) {
     return NextResponse.next()
   }
@@ -51,5 +51,6 @@ export function middleware(req: NextRequest) {
 
 export const config = {
   matcher: ['/admin/:path*', '/book', '/login'],
-  runtime: 'nodejs', // ensures Node.js runtime (jwt verification should be in API route)
+  runtime: 'nodejs', // ✅ Node.js runtime
 }
+

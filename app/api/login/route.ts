@@ -86,6 +86,8 @@
 // }
 
 // app/api/login/route.ts
+
+
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcrypt'
@@ -109,22 +111,22 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
   }
 
-  // 3️⃣ Create JWT token
+  // 3️⃣ Create token
   const token = jwt.sign(
     { id: user.id, role: user.role, email: user.email },
     JWT_SECRET,
     { expiresIn: '1h' }
   )
 
-  // 4️⃣ Set cookie
+  // 4️⃣ Send token in cookie
   const res = NextResponse.json({ ok: true, role: user.role })
   res.cookies.set(COOKIE_NAME, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', // true on EC2/HTTPS, false locally
+    secure: process.env.NODE_ENV === 'production', // true on HTTPS
     sameSite: 'lax',
-    path: '/', // required for middleware
-    maxAge: 60 * 60, // 1 hour
+    path: '/',
   })
 
   return res
 }
+

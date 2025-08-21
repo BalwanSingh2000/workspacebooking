@@ -165,6 +165,7 @@
 // }
 
 'use client'
+
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import LoadingSpinner from '../components/LoadingSpinner'
@@ -186,11 +187,10 @@ export default function LoginPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
-        credentials: 'include', // important to store cookie
+        credentials: 'include',
       })
 
       const data = await res.json()
-
       if (!res.ok) {
         setError(data.error || 'Login failed')
         setLoading(false)
@@ -200,7 +200,6 @@ export default function LoginPage() {
       // Redirect based on role
       if (data.role === 'admin') router.push('/admin/workspaces')
       else router.push('/book')
-
     } catch (err) {
       console.error('Login error:', err)
       setError('Something went wrong')
@@ -230,18 +229,10 @@ export default function LoginPage() {
           required
         />
         {error && <p className="text-red-600 text-sm">{error}</p>}
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-black text-white p-2 rounded disabled:opacity-50"
-        >
+        <button type="submit" disabled={loading} className="w-full bg-black text-white p-2 rounded disabled:opacity-50">
           {loading ? <LoadingSpinner /> : 'Login'}
         </button>
       </form>
-      <div className="mt-4 text-xs text-gray-500">
-        <p>Admin: admin@altf.com / Admin@123</p>
-        <p>User: user@altf.com / User@123</p>
-      </div>
     </div>
   )
 }
