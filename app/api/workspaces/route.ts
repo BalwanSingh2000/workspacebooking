@@ -188,7 +188,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const decoded = jwt.verify(token, JWT_SECRET) as any
+    let decoded: any
+    try {
+      decoded = jwt.verify(token, JWT_SECRET)
+    } catch (err: any) {
+      if (err.name === 'TokenExpiredError') {
+        return NextResponse.json({ error: 'Token expired, please login again' }, { status: 401 })
+      }
+      throw err
+    }
+
     if (decoded.role !== 'admin') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
@@ -211,3 +220,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
 }
+
