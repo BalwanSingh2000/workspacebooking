@@ -5,12 +5,13 @@ const nextConfig = {
     JWT_COOKIE_NAME: process.env.JWT_COOKIE_NAME || 'auth',
   },
   eslint: {
-    // ✅ Ignore ESLint errors during build
     ignoreDuringBuilds: true,
   },
   typescript: {
-    // ✅ Ignore TypeScript errors during build
     ignoreBuildErrors: true,
+  },
+  experimental: {
+    nodeMiddleware: true, // ✅ Enable Node.js runtime for middleware
   },
 }
 
