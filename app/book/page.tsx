@@ -8,6 +8,7 @@ interface Workspace {
   name: string
   location: string
   capacity: number
+  image?: string | null 
 }
 
 interface Booking {
@@ -159,6 +160,26 @@ export default function BookingPage() {
         </div>
 
         {/* Date */}
+        <div>
+          <label className="block mb-1 font-medium">Workspace image</label>
+        {/* Show workspace image if selected */}
+{selectedWorkspace && (
+  <div className="mb-4">
+    {selectedWorkspace.image ? (
+      <img
+        src={selectedWorkspace.image}
+        alt={selectedWorkspace.name}
+        className="w-full h-68 object-cover rounded-lg shadow-md"
+      />
+    ) : (
+      <div className="w-full h-48 flex items-center justify-center bg-gray-100 rounded-lg text-gray-500">
+        No image available
+      </div>
+    )}
+  </div>
+)}
+
+        </div>
         <div>
           <label className="block mb-1 font-medium">Date</label>
           <input
