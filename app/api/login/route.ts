@@ -35,7 +35,8 @@ export async function POST(req: Request) {
   const res = NextResponse.json({ ok: true, role: user.role })
   res.cookies.set(COOKIE_NAME, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', // false in dev
+    // secure: process.env.NODE_ENV === 'production', // false in dev
+    secure: false,
     sameSite: 'lax',
     path: '/', // needed for middleware
   })
